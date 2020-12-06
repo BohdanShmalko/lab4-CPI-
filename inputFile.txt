@@ -1,0 +1,24 @@
+print lol
+delete testDeleteCommand1 e
+someBadCommand smth
+
+delete i
+print
+delete simon3 m
+delete simon4 o
+delete simon5 n
+delete simon6 s
+delete simon7 i
+delete simon8 m
+delete simon9 0
+delete simon10 n
+delete simon11 s
+delete simon12 i
+
+delete simon14 0
+delete simon15 n
+delete simon16 s
+delete simon17 i
+delete simon18 m
+delete simon19 0
+delete simon20 n
