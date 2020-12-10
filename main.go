@@ -1,7 +1,7 @@
 package main
 
 import (
-	"./engine"
+	"github.com/BohdanShmalko/lab4-CPI-/engine"
 	"bufio"
 	"fmt"
 	"os"

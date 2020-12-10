@@ -1,4 +1,4 @@
-print lol
+print somePrintString
 delete testDeleteCommand1 e
 someBadCommand smth
 
