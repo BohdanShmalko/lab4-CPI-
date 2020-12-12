@@ -12,27 +12,21 @@ func parse(strCommand string) engine.Command {
 	parts := strings.Fields(strCommand)
 
 	if len(parts) == 0 {
-		res := new(commands.errorCommand)
-		return res{"empty command string"}
+		return &commands.ErrorCommand{"empty command string"}
 	}
 
 	if parts[0] == "print" {
 		if len(parts) < 2 {
-			res := new(commands.errorCommand)
-			return res{"few arguments were introduced (must be 2 arguments)"}
+			return &commands.ErrorCommand{"few arguments were introduced (must be 2 arguments)"}
 		}
-		res := new(commands.printCommand)
-		return res{parts[1]}
+		return &commands.PrintCommand{parts[1]}
 	} else if parts[0] == "delete" {
 		if len(parts) < 3 {
-			res := new(commands.errorCommand)
-			return res{"few arguments were introduced (must be 3 arguments)"}
+			return &commands.ErrorCommand{"few arguments were introduced (must be 3 arguments)"}
 		}
-		res := new(commands.deleteCommand)
-		return res{parts[1], parts[2]}
+		return &commands.DeleteCommand{parts[1], parts[2]}
 	}
-	res := new(commands.errorCommand)
-	return res{"incorrect command name"}
+	return &commands.ErrorCommand{"incorrect command name"}
 }
 
 func main() {

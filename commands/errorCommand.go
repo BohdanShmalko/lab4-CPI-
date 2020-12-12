@@ -5,11 +5,11 @@ import (
 	"github.com/BohdanShmalko/lab4-CPI-/engine"
 )
 
-type errorCommand struct {
-	errorStr string
+type ErrorCommand struct {
+	ErrorStr string
 }
 
-func (e *errorCommand) Execute(loop engine.Handler) {
-	result := fmt.Sprintf("SYNTAX ERROR: %s", e.errorStr)
-	loop.Post(&printCommand{arg: result})
+func (e *ErrorCommand) Execute(loop engine.Handler) {
+	result := fmt.Sprintf("SYNTAX ERROR: %s", e.ErrorStr)
+	loop.Post(&PrintCommand{Arg: result})
 }

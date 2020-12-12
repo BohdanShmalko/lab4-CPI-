@@ -5,11 +5,11 @@ import (
 	"github.com/BohdanShmalko/lab4-CPI-/engine"
 	)
 
-type deleteCommand struct {
-	arg1, arg2 string
+type DeleteCommand struct {
+	Arg1, Arg2 string
 }
 
-func (d *deleteCommand) Execute(loop engine.Handler) {
-	result := strings.Replace(d.arg1, d.arg2, "", -1)
-	loop.Post(&printCommand{arg: result})
+func (d *DeleteCommand) Execute(loop engine.Handler) {
+	result := strings.Replace(d.Arg1, d.Arg2, "", -1)
+	loop.Post(&PrintCommand{Arg: result})
 }
