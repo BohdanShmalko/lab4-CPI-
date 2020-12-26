@@ -4,36 +4,73 @@ import (
 	"sync"
 )
 
-type EventLoop struct {
-	messageQueue chan Command
-	wg sync.WaitGroup
-	count int
-	done int
+type messageQueue struct {
+	sync.Mutex
+	data             []Command
+	receiveSignal    chan struct{}
+	receiveRequested bool
 }
 
-func (el *EventLoop) readMessages(){
-	for i := range el.messageQueue{
-		i.Execute(el)
-		el.done++
-		if el.count == el.done { el.wg.Done() }
+type EventLoop struct {
+	mq          *messageQueue
+	stopSignal  chan struct{}
+	stopRequest bool
+}
+
+func (el *EventLoop) Start() {
+	el.mq = &messageQueue{receiveSignal: make(chan struct{})}
+	el.stopSignal = make(chan struct{})
+	go func() {
+		for !el.stopRequest || len(el.mq.data) != 0 {
+			cmd := el.mq.pull()
+			cmd.Execute(el)
+		}
+		el.stopSignal <- struct{}{}
+	}()
+}
+
+func (el *EventLoop) Post(cmd Command) {
+	el.mq.push(cmd)
+}
+
+type CommandFunc func(h Handler)
+
+func (cf CommandFunc) Execute(h Handler) {
+	cf(h)
+}
+
+func (el *EventLoop) AwaitFinish() {
+	el.Post(CommandFunc(func(h Handler) {
+		el.stopRequest = true
+	}))
+	<-el.stopSignal
+}
+
+func (mq *messageQueue) push(command Command) {
+	mq.Lock()
+	defer mq.Unlock()
+
+	mq.data = append(mq.data, command)
+	if mq.receiveRequested {
+		mq.receiveRequested = false
+		mq.receiveSignal <- struct{}{}
 	}
 
 }
 
-func (el *EventLoop) Start() {
-	el.messageQueue = make(chan Command, 1)
-	el.wg.Add(1)
-	go el.readMessages()
-}
+func (mq *messageQueue) pull() Command {
+	mq.Lock()
+	defer mq.Unlock()
 
-func (el *EventLoop) Post(cmd Command) {
-	el.count++
-	go func() {
-		el.messageQueue <- cmd
-	}()
-}
+	if len(mq.data) == 0 {
+		mq.receiveRequested = true
+		mq.Unlock()
+		<-mq.receiveSignal
+		mq.Lock()
+	}
 
-func (el *EventLoop) AwaitFinish() {
-	defer close(el.messageQueue)
-	el.wg.Wait()
+	res := mq.data[0]
+	mq.data[0] = nil
+	mq.data = mq.data[1:]
+	return res
 }

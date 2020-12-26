@@ -2,10 +2,10 @@ package main
 
 import (
 	"bufio"
+	"github.com/BohdanShmalko/lab4-CPI-/commands"
+	"github.com/BohdanShmalko/lab4-CPI-/engine"
 	"os"
 	"strings"
-	"github.com/BohdanShmalko/lab4-CPI-/engine"
-	"github.com/BohdanShmalko/lab4-CPI-/commands"
 )
 
 func parse(strCommand string) engine.Command {
